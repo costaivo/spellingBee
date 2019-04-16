@@ -1,0 +1,63 @@
+<html>
+
+<head>
+        <title>Nathan Spelling Bee Trainer</title>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+
+<body>
+        <div class="container" id="mainHeader">
+                <div class="jumbotron jumbotron-fluid">
+                        <div class="container">
+                                <h1 class="display-4">Nathan's Spelling Bee Trainer</h1>
+                                <p class="lead" id="text">Nathan Welcome to Spelling Bee Trainer Program.
+                                        Dont Worry Just be Happy Nathan!
+                                        Are you ready for Practicing all your words today?</p>
+                        </div>
+                </div>
+        
+        <div id="support" class="d-none"></div>
+        <div class="text-center">
+                <div class="btn-group" align="center" role="group" aria-label="Basic example">
+                        <button type="button" class="btn btn-primary" id="play">Play Instructions</button>
+                        <button type="button" class="btn btn-secondary " id="pause">Pause</button>
+                        <button type="button" class="btn btn-secondary " id="resume">Resume</button>
+                </div>
+        </div>
+</div>
+        <br>
+        <div class="container d-none" id="trainingArena">
+                <div class="alert alert-primary text-center" role="alert">
+                        <span class="display-5"><strong>Training Arena</strong></span>
+                </div>
+
+                <div class="text-center">
+                        <button id="startMyTraining" class="btn btn-success">Start My Training</button>
+                        <br> <br>
+                        <div class="form-group">
+                                <input class="form-control" id="inputAnswer" type="text" placeholder="Enter the Word Spoken">
+                                <small id="emailHelp" class="form-text text-muted">Type the word in the above textbox and press submit</small>
+                        </div>
+                        <button id="submitAnswer" class="btn btn-primary disabled"> Submit Answer </button>
+                </div>
+
+                <br>
+                <button type="button" class="btn btn-primary">
+                                Current Score <span class="badge badge-light" id="scoreCounter">0</span>
+                <span class="sr-only">unread messages</span>
+                </button>
+                <button type="button" class="btn btn-warning">
+                                Current Wrong Attempts <span class="badge badge-light" id="currentWrongAttempts">0</span>
+                 <span class="sr-only">unread messages</span>
+                 </button>
+                <button type="button" class="btn btn-danger">
+                               Total Wrong Attempts <span class="badge badge-light" id="wrongAttempts">0</span>
+                <span class="sr-only">unread messages</span>
+                </button>
+        </div>
+
+        <script src="/app.a6a4d504.js"></script>
+</body>
+
+</html>
