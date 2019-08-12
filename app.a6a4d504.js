@@ -3340,6 +3340,7 @@ function _prepareSpeakButton(speech) {
           text: "Great Going buddy. Your current score is :" + scoreCount + "points. Next word coming up",
           queue: false
         });
+        setTimeout({}, 2000);
       }
 
       var currentMarks = currentIncorrectAttempts * -1 + 10;
@@ -3349,11 +3350,21 @@ function _prepareSpeakButton(speech) {
     } else {
       currentIncorrectAttempts++;
       currentWrongAttempts.innerText = currentIncorrectAttempts;
-      speech.speak({
-        text: "Sorry That was an Incorrect Answer. Try Again!",
-        queue: false
-      });
-      inputAnswer.style.backgroundColor = "red";
+
+      if (currentIncorrectAttempts <= 2) {
+        speech.speak({
+          text: "Sorry That was an Incorrect Answer. Try Again!",
+          queue: false
+        });
+        inputAnswer.style.backgroundColor = "red";
+        inputAnswer.style.color = "white";
+      } else {
+        speech.speak({
+          text: "Sorry! That was a wrong spelling. Try the next word now",
+          queue: false
+        });
+        setTimeout(setNextWord, 5000);
+      }
     }
   });
 
@@ -3367,6 +3378,7 @@ function _prepareSpeakButton(speech) {
     currentWrongAttempts.innerText = "0";
     inputAnswer.value = "";
     inputAnswer.style.backgroundColor = "white";
+    inputAnswer.style.color = "black";
 
     if (totalIncorrectAttempts > 3) {
       speech.speak({
@@ -3448,7 +3460,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "5816" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "9928" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
@@ -3624,4 +3636,4 @@ function hmrAcceptRun(bundle, id) {
   }
 }
 },{}]},{},["node_modules/parcel-bundler/src/builtins/hmr-runtime.js","src/app.js"], null)
-//# sourceMappingURL=/app.a6a4d504.js.map
+//# sourceMappingURL=/app.a6a4d504.js.mapp
