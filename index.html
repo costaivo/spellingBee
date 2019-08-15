@@ -4,6 +4,44 @@
         <title>Nathan Spelling Bee Trainer</title>
         <meta charset="UTF-8">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <style>.flex-container {
+                        display: flex;
+                        background-color: DodgerBlue;
+                }
+
+                .flex-container>div {
+                        background-color: #f1f1f1;
+                        margin: 10px;
+                        padding: 20px;
+                        font-size: 30px;
+                }
+
+                .flex-column {
+                        display: flex;
+                        flex-direction: column;
+                        flex-wrap: wrap;
+                }
+
+                .flex-container-words {
+                        display: flex;
+                        flex-direction: row;
+                        flex-wrap: wrap;
+                        align-content: flex-start;
+                        align-content: space-between;
+                }
+
+                .flex-container-words>label {
+                        margin: 10px;
+
+                }
+
+                button:disabled,
+                button[disabled] {
+                        border: 1px solid #999999;
+                        background-color: #cccccc;
+                        color: #666666;
+                }</style>
 </head>
 
 <body>
@@ -15,30 +53,114 @@
                                         Are you ready for Practicing all your words today?</p>
                         </div>
                 </div>
-        
-        <div id="support" class="d-none"></div>
-        <div class="text-center">
-                <div class="btn-group" align="center" role="group" aria-label="Basic example">
-                        <button type="button" class="btn btn-primary" id="play">Play Instructions</button>
-                        <button type="button" class="btn btn-secondary " id="pause">Pause</button>
-                        <button type="button" class="btn btn-secondary " id="resume">Resume</button>
+
+                <div id="support" class="d-none"></div>
+                <div class="text-center">
+                        <div class="btn-group" align="center" role="group" aria-label="Basic example">
+                                <button type="button" class="btn btn-primary" id="play">Play Instructions</button>
+                                <button type="button" class="btn btn-secondary " id="pause">Pause</button>
+                                <button type="button" class="btn btn-secondary " id="resume">Resume</button>
+                        </div>
                 </div>
         </div>
-</div>
         <br>
-        <div class="container d-none" id="trainingArena">
-                <div class="alert alert-primary text-center" role="alert">
+        <div class="progress d-none" id="progressBar">
+                <div class="progress-bar progress-bar-striped bg-success" id="progressCounter" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+
+        <div class="alert alert-success d-none" id="msgAllGood" role="alert">
+                <h4 class="alert-heading">Well done!</h4>
+                <p>You Completed your Training Successfully Today!! With a clean Slate</p>
+                <hr>
+                <p class="mb-0">You can Practice again by refreshing the Page.</p>
+        </div>
+
+        <div class="alert alert-danger d-none" id="msgGameOver" role="alert">
+                <h4 class="alert-heading">Sorry!!</h4>
+                <p>All your Lifelines got over. Better luck next time.</p>
+                <hr>
+                <p class="mb-0">You can Practice again by refreshing the Page.</p>
+        </div>
+        <br>
+        <!-- START: Training ARENA-->
+        <div class="flex-container d-none" id="trainingArena">
+                <!-- START: SPELLING BEE CENTER-->
+                <div style="flex: 0 0 650px">
+                        <div>
+                                <div class="alert alert-primary text-center" role="alert">
+                                        <span class="display-5"><strong>Training Arena</strong></span>
+                                </div>
+
+                                <div class="text-center">
+                                        <button id="startMyTraining" class="btn btn-success">Start My Training</button>
+                                        <br> <br>
+                                        <div class="form-group">
+                                                <input class="form-control" id="inputAnswer" type="text" spellcheck="false" data-gramm="false" placeholder="Enter the Word Spoken">
+                                                <small id="emailHelp" class="form-text text-muted">Type the word in the above textbox and press submit</small>
+                                        </div>
+                                        <button type="button" id="submitAnswer" class="btn btn-primary"> Submit Answer </button>
+                                </div>
+
+                                <br>
+                                <button type="button" class="btn btn-primary">
+                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                         Score <span class="badge badge-light" id="scoreCounter">0</span>
+                                              
+                                </button>
+                                <button type="button" class="btn btn-warning">
+                                        <i class="fa fa-ban" aria-hidden="true"></i>
+                                        Wrong Attempts <span class="badge badge-light" id="currentWrongAttempts">0</span>
+                                        <span class="sr-only">unread messages</span>
+                                </button>
+                                <button type="button" class="btn btn-danger">
+                                        <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+                                        Total Wrong Attempts <span class="badge badge-light" id="wrongAttempts">0</span>
+                                        <span class="sr-only">unread messages</span>
+                                </button>
+                        </div>
+                </div>
+                <!-- END: SPELLING BEE CENTER-->
+
+                <!-- START: WORDS ARENA-->
+                <div style="flex-grow: 8">
+                        <div class="flex-column">
+                                <div class="alert alert-primary text-center" role="alert">
+                                        <span class="display-5"><strong>Words</strong></span>
+                                        <span class="badge badge-light d-none" id="totalWordsAttempted">0</span>
+                                        <span class="d-none" id="scoreDivider"> <strong>/</strong></span>
+                                        <span class="badge badge-light d-none" id="totalWordsAvailable">0</span>
+                                </div>
+                                <div class="flex-container-words" id="wordsDisplayArea">
+
+
+                                </div>
+                        </div>
+                </div>
+        </div>
+        <!-- END: Training ARENA-->
+
+        <!-- <div class="container d-none" id="trainingArena">
+                <div class="alert alert-primary text-center"
+                     role="alert">
                         <span class="display-5"><strong>Training Arena</strong></span>
                 </div>
 
                 <div class="text-center">
-                        <button id="startMyTraining" class="btn btn-success">Start My Training</button>
-                        <br> <br>
+                        <button id="startMyTraining"
+                                class="btn btn-success">Start My Training</button>
+                        <br /> <br />
                         <div class="form-group">
-                                <input class="form-control" id="inputAnswer" type="text" spellcheck="false" data-gramm="false" placeholder="Enter the Word Spoken">
-                                <small id="emailHelp" class="form-text text-muted">Type the word in the above textbox and press submit</small>
+                                <input class="form-control"
+                                       id="inputAnswer"
+                                       type="text"
+                                       spellcheck="false"
+                                       data-gramm="false"
+                                       placeholder="Enter the Word Spoken" />
+                                <small id="emailHelp"
+                                       class="form-text text-muted">Type the word in the above textbox and press submit</small>
                         </div>
-                        <button id="submitAnswer" class="btn btn-primary disabled"> Submit Answer </button>
+                        <button id="submitAnswer"
+                                class="btn btn-primary disabled"> Submit Answer </button>
                 </div>
 
                 <br>
@@ -54,7 +176,7 @@
                                Total Wrong Attempts <span class="badge badge-light" id="wrongAttempts">0</span>
                 <span class="sr-only">unread messages</span>
                 </button>
-        </div>
+        </div> -->
 
         <script src="app.a6a4d504.js"></script>
 </body>

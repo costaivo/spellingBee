@@ -3246,8 +3246,27 @@ var scoreCount = 0;
 var wordIndex = 0;
 var totalIncorrectAttempts = 0;
 var currentIncorrectAttempts = 0;
+var totalWordsAttempted = 0;
+
+function shuffle(array) {
+  var counter = array.length; // While there are elements in the array
+
+  while (counter > 0) {
+    // Pick a random index
+    var index = Math.floor(Math.random() * counter); // Decrease counter by 1
+
+    counter--; // And swap the last element with it
+
+    var temp = array[counter];
+    array[counter] = array[index];
+    array[index] = temp;
+  }
+
+  return array;
+}
 
 function _init() {
+  _wordsToSpell = shuffle(_wordsToSpell);
   var speech = new _speakTts.default();
   speech.init({
     volume: 0.5,
@@ -3288,7 +3307,13 @@ function _prepareSpeakButton(speech) {
   var scoreLabel = document.getElementById("scoreCounter");
   var lblIncorrectAttempts = document.getElementById("wrongAttempts");
   var currentWrongAttempts = document.getElementById("currentWrongAttempts");
-  var currentWordToSpell = "cat";
+  var lblTotalWordsAttempted = document.getElementById("totalWordsAttempted");
+  var lblTotalWordsAvailable = document.getElementById("totalWordsAvailable");
+  var lblScoreDivider = document.getElementById("scoreDivider");
+  var divWordsDisplayArea = document.getElementById("wordsDisplayArea");
+  var progressBar = document.getElementById("progressBar");
+  var progressCounter = document.getElementById("progressCounter");
+  var currentWordToSpell = _wordsToSpell[0];
   speakButton.addEventListener("click", function () {
     var language = languages.value;
     var voice = languages.options[languages.selectedIndex].dataset.name;
@@ -3326,8 +3351,14 @@ function _prepareSpeakButton(speech) {
     speech.resume();
   });
   submitAnswerButton.addEventListener("click", function () {
+    console.log("Submit Button Clicked!!");
+    submitAnswer.disabled = true;
+
     if (inputAnswer.value.toLowerCase() === currentWordToSpell.toLocaleLowerCase()) {
-      if (scoreCount % 2 === 0) {
+      var currentMarks = currentIncorrectAttempts * -1 + 10;
+      if (currentMarks > 0) scoreCount += currentMarks;else scoreCount += 1;
+
+      if (scoreCount % 2 == 0) {
         console.log('odd score');
         speech.speak({
           text: "Very Good my Friend. Now for the next word",
@@ -3343,35 +3374,84 @@ function _prepareSpeakButton(speech) {
         setTimeout({}, 2000);
       }
 
-      var currentMarks = currentIncorrectAttempts * -1 + 10;
-      if (currentMarks > 0) scoreCount += currentMarks;else scoreCount += 1;
       scoreLabel.innerText = scoreCount;
       setNextWord();
     } else {
       currentIncorrectAttempts++;
       currentWrongAttempts.innerText = currentIncorrectAttempts;
 
-      if (currentIncorrectAttempts <= 2) {
+      if (currentIncorrectAttempts < 2) {
         speech.speak({
           text: "Sorry That was an Incorrect Answer. Try Again!",
           queue: false
         });
         inputAnswer.style.backgroundColor = "red";
         inputAnswer.style.color = "white";
+        submitAnswer.disabled = false;
       } else {
         speech.speak({
           text: "Sorry! That was a wrong spelling. Try the next word now",
           queue: false
         });
-        setTimeout(setNextWord, 5000);
+        setTimeout({}, 5000);
+        setNextWord();
       }
+    }
+  }); // Get the input field
+
+  var input = document.getElementById("inputAnswer"); // Execute a function when the user releases a key on the keyboard
+
+  input.addEventListener("keyup", function (event) {
+    // Number 13 is the "Enter" key on the keyboard
+    if (event.keyCode === 13) {
+      // Cancel the default action, if needed
+      event.preventDefault(); // Trigger the button element with a click
+
+      document.getElementById("submitAnswer").click();
     }
   });
 
+  function shuffle(array) {
+    var counter = array.length; // While there are elements in the array
+
+    while (counter > 0) {
+      // Pick a random index
+      var index = Math.floor(Math.random() * counter); // Decrease counter by 1
+
+      counter--; // And swap the last element with it
+
+      var temp = array[counter];
+      array[counter] = array[index];
+      array[index] = temp;
+    }
+
+    return array;
+  }
+
   function setNextWord() {
+    if (totalWordsAttempted === 0) {
+      lblTotalWordsAttempted.classList.remove("d-none");
+      lblTotalWordsAvailable.classList.remove("d-none");
+      progressBar.classList.remove("d-none");
+      lblScoreDivider.classList.remove("d-none");
+      progressCounter.setAttribute("aria-valuemax", 0);
+      lblTotalWordsAvailable.innerText = _wordsToSpell.length;
+    }
+
+    totalWordsAttempted++;
+    lblTotalWordsAttempted.innerText = totalWordsAttempted;
+    var currentWord = _wordsToSpell[wordIndex];
+    progressCounter.setAttribute("aria-valuenow", totalWordsAttempted);
+    var percentageComplete = totalWordsAttempted * 100 / _wordsToSpell.length;
+    var progress = "width: " + percentageComplete + "%";
+    progressCounter.setAttribute("style", progress);
+
     if (currentIncorrectAttempts > 0) {
       totalIncorrectAttempts++;
       lblIncorrectAttempts.innerText = totalIncorrectAttempts;
+      divWordsDisplayArea.innerHTML += "<label class='btn btn-danger'>" + currentWord + " <span class='badge badge-danger badge-pill'><i class='fa fa-times-circle' aria-hidden='true'></i></span></label>";
+    } else {
+      divWordsDisplayArea.innerHTML += "<label class='btn btn-primary'>" + currentWord + " <span class='badge badge-success badge-pill'><i class='fa fa-check' aria-hidden='true'></i></span></label>";
     }
 
     currentIncorrectAttempts = 0;
@@ -3385,25 +3465,34 @@ function _prepareSpeakButton(speech) {
         text: "Sorry! You have Exceeded all the lifelines. Your Final Score is ".concat(scoreCount, ". Please restart to try again."),
         queue: false
       });
+      setTimeout({}, 2000);
+      document.getElementById("msgGameOver").classList.remove("d-none");
+      submitAnswerButton.style.visibility = 'hidden';
+      startTrainingButton.style.visibility = 'hidden';
+      progressBar.classList.add("d-none");
     } else if (wordIndex >= _wordsToSpell.length) {
       speech.speak({
         text: "You have completed Training for all the words today. Your Final score is " + scoreCount + " points",
         queue: false
       });
+      progressBar.classList.add("d-none");
+      if (totalIncorrectAttempts == 0) document.getElementById("msgAllGood").classList.remove("d-none");
     } else {
+      //move to next word
+      wordIndex++;
       currentWordToSpell = _wordsToSpell[wordIndex];
       speech.speak({
         text: "Ready for Next Word..., spell " + currentWordToSpell,
         queue: false
       });
+      setTimeout({}, 2000);
     }
 
-    wordIndex++;
+    submitAnswer.disabled = false;
   }
 
   ;
   startTrainingButton.addEventListener("click", function () {
-    submitAnswer.disabled = false;
     speech.speak({
       text: "Spell " + currentWordToSpell,
       queue: false,
@@ -3460,7 +3549,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "9928" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "8380" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
@@ -3636,4 +3725,4 @@ function hmrAcceptRun(bundle, id) {
   }
 }
 },{}]},{},["node_modules/parcel-bundler/src/builtins/hmr-runtime.js","src/app.js"], null)
-//# sourceMappingURL=/app.a6a4d504.js.mapp
+//# sourceMappingURL=/app.a6a4d504.js.map
