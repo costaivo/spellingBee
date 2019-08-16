@@ -1,1 +1,7 @@
+<<<<<<< HEAD
 node_modules
+=======
+dist
+node_modules
+.cache
+>>>>>>> origin/master
